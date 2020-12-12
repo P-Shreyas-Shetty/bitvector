@@ -66,7 +66,12 @@ class BitVec:
             num -= lhs.val 
             counter+=1
         return BitVec(size, val=counter)
-  
+    
+    def fast_div(self, lhs):
+        size = max([self.size, lhs.size])
+        val = self.val // lhs.val
+        return BitVec(size, val)
+        
     def __mod__ (self, lhs):
         size = max([self.size, lhs.size])
         num = self.val 
@@ -76,6 +81,11 @@ class BitVec:
             counter+=1
         return BitVec(size, val=num)
 
+    def fast_mod(self, lhs):
+        size = max([self.size, lhs.size])
+        val = self.val % lhs.val
+        return BitVec(size, val)
+    
     def __lshift__(self, lhs):
         size = self.size
         val = (self.val << lhs.val)
