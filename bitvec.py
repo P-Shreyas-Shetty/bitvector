@@ -95,7 +95,17 @@ class BitVec:
         size = self.size
         val = (self.val >> lhs.val)
         return BitVec(size, val)
-        
+
+    def clshift(self, lhs):
+        size = self.size 
+        val = (self.val << lhs.val)|(self.val >> (size - lhs.val)) 
+        return BitVec(size, val)
+
+    def crshift(self, lhs):
+        size = self.size
+        val  = (self.val >> lhs.d) | (self.val << (size - lhs.val)) & ((2**size)-1)
+        return BitVec(size, val) 
+    
     def __and__(self, lhs):
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
