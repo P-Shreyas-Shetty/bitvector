@@ -18,7 +18,6 @@ class BitVec:
             stop = 0 if stop is None else stop
             step = 1 if step is None else step
 
-
             if start<stop:
                 start, stop = stop, start
                 rev = 1
@@ -35,20 +34,77 @@ class BitVec:
             else:
                 bv.val = int('0b'+bs[stop:start+1:step], base=2)
             return bv
+    
+    def __repr__(self):
+        return "0b"+str(bin(self.val))[2:].zfill(self.size) #return bin(self.val)
 
     def __add__(self, lhs):
         size = max([self.size, lhs.size])
         val = (self.val + lhs.val) & ((1<<size) - 1)
         return BitVec(size, val)
 
-
     def __sub__(self, lhs):
         size = max([self.size, lhs.size])
         val = (self.val + ~lhs.val+1)
         return BitVec(size, val)
 
-    def __repr__(self):
-        return bin(self.val)
+    def __mul__(self, lhs):
+        size = self.size + lhs.size
+        val = (self.val * lhs.val)
+        return BitVec(size, val)
+        
+    def __pow__(self, lhs):
+        val = (self.val ** lhs.val)
+        size = len(bin(val)[2:]) ## should this be used to optimze size for power, mul etc ? given its string operation, can save the size
+        return BitVec(size, val)
+
+    def __div__ (self, lhs):
+        size = max([self.size, lhs.size])
+        num = self.val 
+        counter = 0
+        while(num>=lhs.val):
+            num -= lhs.val 
+            counter+=1
+        return BitVec(size, val=counter)
+  
+    def __mod__ (self, lhs):
+        size = max([self.size, lhs.size])
+        num = self.val 
+        counter = 0
+        while(num>=lhs.val):
+            num -= lhs.val 
+            counter+=1
+        return BitVec(size, val=num)
+
+    def __lshift__(self, lhs):
+        size = self.size
+        val = (self.val << lhs.val)
+        return BitVec(size, val)
+        
+    def __rshift__(self, lhs):
+        size = self.size
+        val = (self.val >> lhs.val)
+        return BitVec(size, val)
+        
+    def __and__(self, lhs):
+        size = max([self.size, lhs.size])
+        val = self.val & lhs.val
+        return BitVec(size, val)
+    
+    def __or__(self, lhs):
+        size = max([self.size, lhs.size])
+        val = self.val | lhs.val 
+        return BitVec(size,val)
+        
+    def __xor__(self, lhs):
+        size = max([self.size, lhs.size])
+        val = self.val ^ lhs.val 
+        return BitVec(size,val)
+        
+    def __invert__(self):
+        size = self.size
+        val = ~self.val  
+        return BitVec(size,val)
 
     def hex(self):
         return hex(self.val)
@@ -59,6 +115,29 @@ class BitVec:
     def bin(self):
         return bin(self.val())
 
+    def __eq__(self, lhs):
+        bool_val = (self.val == lhs.val)
+        return bool_val ## BitVec(size=1, val = int(bool_val))
+    
+    def __lt__(self, lhs):
+        bool_var = self.val < lhs.val 
+        return bool_var ## BitVec(size=1, val = int(bool_val))
+    
+    def __le__(self, lhs):
+        bool_var = self.val <= lhs.val 
+        return bool_var ## BitVec(size=1, val = int(bool_val))
+    
+    def __ne__(self, lhs):
+        bool_var = self.val != lhs.val 
+        return bool_var ## BitVec(size=1, val = int(bool_val))
+
+    def __gt__(self, lhs):
+        bool_var = self.val > lhs.val 
+        return bool_var ## BitVec(size=1, val = int(bool_val))
+
+    def __ge__(self, lhs):
+        bool_var = self.val >= lhs.val
+        return bool_var ##BitVec(size=1, val = int(bool_val))
 
 
     #TODO: Complete the implementation of set
