@@ -49,63 +49,57 @@ class BitVec:
         return BitVec(size, val)
 
     def __mul__(self, lhs):
-        size = self.size + lhs.size
         val = (self.val * lhs.val)
+        size = val.bit_length()
         return BitVec(size, val)
         
     def __pow__(self, lhs):
         val = (self.val ** lhs.val)
-        size = len(bin(val)[2:]) ## should this be used to optimze size for power, mul etc ? given its string operation, can save the size
+        size = val.bit_length()
         return BitVec(size, val)
 
     def __truediv__ (self, lhs):
-        size = max([self.size, lhs.size])
-        num = self.val 
-        counter = 0
-        while(num>=lhs.val):
-            num -= lhs.val 
-            counter+=1
-        return BitVec(size, val=counter)
-    
-    def fast_div(self, lhs):
         size = max([self.size, lhs.size])
         val = self.val // lhs.val
         return BitVec(size, val)
         
     def __mod__ (self, lhs):
         size = max([self.size, lhs.size])
-        num = self.val 
-        counter = 0
-        while(num>=lhs.val):
-            num -= lhs.val 
-            counter+=1
-        return BitVec(size, val=num)
-
-    def fast_mod(self, lhs):
-        size = max([self.size, lhs.size])
         val = self.val % lhs.val
         return BitVec(size, val)
     
     def __lshift__(self, lhs):
         size = self.size
-        val = (self.val << lhs.val)
+        if(type(lhs) is int):
+            val = self.val << lhs
+        else:
+            val = (self.val << lhs.val)
         return BitVec(size, val)
         
     def __rshift__(self, lhs):
         size = self.size
-        val = (self.val >> lhs.val)
+        if(type(lhs) is int):
+            val = self.val >> lhs
+        else:
+            val = (self.val >> lhs.val)
         return BitVec(size, val)
-
+        
     def clshift(self, lhs):
-        size = self.size 
-        val = (self.val << lhs.val)|(self.val >> (size - lhs.val)) 
+        size = self.size
+        if(type(lhs) is int):
+            val = (self.val << lhs)|(self.val >> (size - lhs)) 
+        else:
+            val = (self.val << lhs.val)|(self.val >> (size - lhs.val)) 
         return BitVec(size, val)
-
+    
     def crshift(self, lhs):
         size = self.size
-        val  = (self.val >> lhs.d) | (self.val << (size - lhs.val)) & ((2**size)-1)
-        return BitVec(size, val) 
-    
+        if(type(lhs) is int):
+            val = (self.val >> lhs) | (self.val << (size - lhs)) & ((2**size)-1)
+        else:
+            val = (self.val >> lhs.val) | (self.val << (size - lhs.val)) & ((2**size)-1)
+        return BitVec(size, val)
+
     def __and__(self, lhs):
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
