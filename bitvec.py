@@ -105,13 +105,13 @@ class BitVec:
             val = self.val // lhs.val
         return BitVec(size, val)
 
-    #modulus method
+    #modulo method
     def __mod__ (self, lhs):
         size = max([self.size, lhs.size])
         val = self.val % lhs.val
         return BitVec(size, val)
     
-    #inplace modulus method
+    #inplace modulo method
     def __imod__ (self, lhs):
         size = self.size
         if(type(lhs) is int):
