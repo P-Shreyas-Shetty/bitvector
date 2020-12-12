@@ -58,7 +58,7 @@ class BitVec:
         size = len(bin(val)[2:]) ## should this be used to optimze size for power, mul etc ? given its string operation, can save the size
         return BitVec(size, val)
 
-    def __div__ (self, lhs):
+    def __truediv__ (self, lhs):
         size = max([self.size, lhs.size])
         num = self.val 
         counter = 0
