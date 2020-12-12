@@ -149,6 +149,31 @@ class BitVec:
         bool_var = self.val >= lhs.val
         return bool_var ##BitVec(size=1, val = int(bool_val))
 
+    def __matmul__(self, lhs):
+        '''
+        Use @ operator for repetition and concatenation
+        If one of the argument is integer then it acts like repetition operator
+        If both arguments are bitvector, then it concatenates them
+        ex: a:BitVec and b:BitVec
+        2@a #Repeat a or concatenate a with itself
+        a@b #concat a with b
+
+        '''
+        if (type(lhs)==int):
+            v = self.val
+            for i in range(lhs):
+                v = (v<<self.size) | self.val
+            return BitVec(self.size*lhs, v)
+        elif (type(lhs)==BitVec):
+            rsize = self.size + lhs.size
+            outval = (self.val << lhs.size) | lhs.val
+            return BitVec(rsize, outval)
+
+        
+
+    def __rmatmul__(self, rhs):
+        return self@rhs;
+
 
     #TODO: Complete the implementation of set
     #def __setitem__(self, index, val):
