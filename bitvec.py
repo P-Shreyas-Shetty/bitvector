@@ -10,20 +10,24 @@ class BitVec:
             if(index>self.size-1):
                 raise ValueError(f"index {index} > size-1 {self.size-1}")
             else:
-                return self.val >> index
-        elif(type(index) == slice):
+                return BitVec(1, self.val >> index)
+        elif isinstance(index, slice):
             start, stop, step = index.start, index.stop, index.step
             
             start = self.size if start is None else start
             stop = 0 if stop is None else stop
             step = 1 if step is None else step
 
+            if step<0:
+                start, stop = stop, start
+                step = -step
+
             if start<stop:
                 start, stop = stop, start
                 rev = 1
             else: rev = 0
 
-            bv = BitVec((start-stop)//step, 0)
+            bv = BitVec((start-stop+1)//step, 0)
             bs = bin(self.val)[2::]
 
             if(len(bs) < self.size):
@@ -41,7 +45,7 @@ class BitVec:
     
     #add method
     def __add__(self, lhs):
-        size = max([self.size, lhs.size])
+        size = max([self.size, lhs.size]) + 1
         val = (self.val + lhs.val)
         return BitVec(size, val)
     
@@ -56,7 +60,7 @@ class BitVec:
 
     #sub method
     def __sub__(self, lhs):
-        size = max([self.size, lhs.size])
+        size = max([self.size, lhs.size]) + 1
         val = (self.val + ~lhs.val+1)
         return BitVec(size, val)
 
@@ -246,20 +250,31 @@ class BitVec:
         return self@rhs;
 
 
-    #TODO: Complete the implementation of set
-    #def __setitem__(self, index, val):
-    #    if(type(index) == int):
-    #        if(index>self.size-1):
-    #            raise ValueError(f"index {index} > size-1 {self.size-1}")
-    #        else:
-    #            self.val = ((1 << index) | self.val) if val else (~(1 << index) & self.val) 
-    #    if(type(index)==slice):
-    #        start, stop, step = index.start, index.stop, index.step
-    #        if(step!=None or step!=1):
-    #            raise IndexError("Cannot set discontinuous slice")
-    #        else:
-    #            subs, ln = val.val, val.size #assuming it's bitveca
-    #            ln1 = stop - start + 1
+    def __setitem__(self, index, val):
+        if isinstance(val, int): val = BitVec(val.bit_length(), val)
+        elif not isinstance(val, BitVec): raise TypeError(f"Expected RHS to be either BitVec or int; got {type(val)}")
+        if isinstance(index, int):
+            if index>(self.size-1):
+                raise IndexError(f"Index {index} out of range; size of the vector is {self.size}")
+            else:
+                self.val = (self.val | (val[0]<<index)) if val[0]==1 else (self.val & ~(val[0]<<index))
+        elif isinstance(index, slice):
+            start, stop, step = index.start, index.stop, index.step
+            if not step is None:
+                raise IndexError(f"Step is not supported in BitVector set")
+            else:
+                if start>=stop: start1, stop1 = start, stop
+                else: start1, stop1 = stop, start
+                mask = ((1<<(start1-stop1+1))-1)<<stop1
+                val_pshd = val[start1-stop1:0] if val.size>=(start1-stop1+1) else BitVec((start1-stop1+1-val.size), 0x0)@val
+                if start<stop: val_pshd = val_pshd[::-1]
+                val_pshd = BitVec(val_pshd.size+stop1, val_pshd)<<stop1
+                mask = BitVec(self.size, mask)
+                self.val = ((~mask&self)|val_pshd).val
+
+                    
+
+                
 
     #TODO: Complete the implementation for the following
     #Operators to be supported
