@@ -228,35 +228,53 @@ class BitVec:
     def bin(self):
         return bin(self.val())
 
-    #equal_to method
+    #equal to 
     def __eq__(self, lhs):
-        bool_val = (self.val == lhs.val)
-        return bool_val ## BitVec(size=1, val = int(bool_val))
-    
-    #less than method
+        if(type(lhs) is int):
+            bool_var = self.val == lhs
+        else:
+            bool_var = (self.val == lhs.val)
+        return bool_var 
+   
+    #less than
     def __lt__(self, lhs):
-        bool_var = self.val < lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_valo))
-    
-    #less than or equal to method
+        if(type(lhs) is int):
+            bool_var = self.val < lhs
+        else:
+            bool_var = (self.val < lhs.val)
+        return bool_var
+
+    #less than or equal
     def __le__(self, lhs):
-        bool_var = self.val <= lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val <= lhs
+        else:
+            bool_var = self.val <= lhs.val 
+        return bool_var
     
-    # not equal to method
+    #not equal to
     def __ne__(self, lhs):
-        bool_var = self.val != lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val != lhs
+        else:
+            bool_var = self.val != lhs.val 
+        return bool_var 
 
-    # greater than method
+    #greater than
     def __gt__(self, lhs):
-        bool_var = self.val > lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val > lhs
+        else:
+            bool_var = self.val > lhs.val 
+        return bool_var 
 
-    #greater than or equal to method
+    #greater than equal
     def __ge__(self, lhs):
-        bool_var = self.val >= lhs.val
-        return bool_var ##BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val >= lhs
+        else:
+            bool_var = self.val >= lhs.val
+        return bool_var 
 
     def __matmul__(self, lhs):
         '''
