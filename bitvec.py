@@ -94,6 +94,11 @@ class BitVec:
         size = val.bit_length()
         return BitVec(size, val)
 
+    def __ipow__(self, lhs):
+        size = self.size
+        val = (self.val ** lhs.val) &((1<<size) - 1)
+        return BitVec(size, val)
+
     #div method
     def __truediv__ (self, lhs):
         size = max([self.size, lhs.size])
@@ -133,6 +138,14 @@ class BitVec:
             val = (self.val << lhs.val)
         return BitVec(size, val)
         
+    def __ilshift__(self, lhs):
+        size = self.size
+        if(type(lhs) is int):
+            val = self.val << lhs
+        else:
+            val = (self.val << lhs.val)
+        return BitVec(size, val)
+    
     # right shift method        
     def __rshift__(self, lhs):
         size = self.size
@@ -151,6 +164,14 @@ class BitVec:
             val = (self.val << lhs.val%size)|(self.val >> (size - lhs.val%size)) 
         return BitVec(size, val)
     
+    def __irshift__(self, lhs):
+        size = self.size
+        if(type(lhs) is int):
+            val = self.val >> lhs
+        else:
+            val = (self.val >> lhs.val)
+        return BitVec(size, val)
+        
     #circular right shift method
     def crshift(self, lhs):
         size = self.size
@@ -166,15 +187,30 @@ class BitVec:
         val = self.val & lhs.val
         return BitVec(size, val)
     
+    def __iand__(self, lhs):
+        size = self.size
+        val = self.val & lhs.val
+        return BitVec(size, val)
+    
     #bitwise or method
     def __or__(self, lhs):
         size = max([self.size, lhs.size])
         val = self.val | lhs.val 
         return BitVec(size,val)
     
+    def __ior__(self, lhs):
+        size = self.size
+        val = self.val | lhs.val 
+        return BitVec(size,val)
+    
     #bitwise XOR method
     def __xor__(self, lhs):
         size = max([self.size, lhs.size])
+        val = self.val ^ lhs.val 
+        return BitVec(size,val)
+    
+    def __ixor__(self, lhs):
+        size = self.size
         val = self.val ^ lhs.val 
         return BitVec(size,val)
     
@@ -196,35 +232,53 @@ class BitVec:
     def bin(self):
         return bin(self.val())
 
-    #equal_to method
+    #equal to 
     def __eq__(self, lhs):
-        bool_val = (self.val == lhs.val)
-        return bool_val ## BitVec(size=1, val = int(bool_val))
-    
-    #less than method
+        if(type(lhs) is int):
+            bool_var = self.val == lhs
+        else:
+            bool_var = (self.val == lhs.val)
+        return bool_var 
+   
+    #less than
     def __lt__(self, lhs):
-        bool_var = self.val < lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_valo))
-    
-    #less than or equal to method
+        if(type(lhs) is int):
+            bool_var = self.val < lhs
+        else:
+            bool_var = (self.val < lhs.val)
+        return bool_var
+
+    #less than or equal
     def __le__(self, lhs):
-        bool_var = self.val <= lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val <= lhs
+        else:
+            bool_var = self.val <= lhs.val 
+        return bool_var
     
-    # not equal to method
+    #not equal to
     def __ne__(self, lhs):
-        bool_var = self.val != lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val != lhs
+        else:
+            bool_var = self.val != lhs.val 
+        return bool_var 
 
-    # greater than method
+    #greater than
     def __gt__(self, lhs):
-        bool_var = self.val > lhs.val 
-        return bool_var ## BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val > lhs
+        else:
+            bool_var = self.val > lhs.val 
+        return bool_var 
 
-    #greater than or equal to method
+    #greater than equal
     def __ge__(self, lhs):
-        bool_var = self.val >= lhs.val
-        return bool_var ##BitVec(size=1, val = int(bool_val))
+        if(type(lhs) is int):
+            bool_var = self.val >= lhs
+        else:
+            bool_var = self.val >= lhs.val
+        return bool_var 
 
     def __matmul__(self, lhs):
         '''
