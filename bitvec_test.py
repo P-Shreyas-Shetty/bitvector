@@ -19,6 +19,18 @@ assert(~a == bv(16, 0x00f0))
 a = bv(8, 0xf8)
 a[3:2] = 0b01
 print(f"set_item: a = {a}")
+
+a = bv(4, 0xa)
+for i,v in enumerate(a):
+    print(f"a[{i}]={v}")
+
+c = bv(4, 0x0)
+s = bv(4, 0x0)
+
+bv.assign((c,s), bv(4,0xf)+bv(4,0x1))
+print(f"c,s:{c},{s}")
+s[...] = 0xf
+print(f"c,s:{c},{s}")
 #print(f"bv(9,0b111010001)[::-1]={bv(9,0b111010001)[::-1]}")
 #print(f"a+b={a+b}")
 #assert(a+b == a.val+b.val)

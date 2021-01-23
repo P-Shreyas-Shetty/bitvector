@@ -1,9 +1,30 @@
+from typing import Union
+
 class BitVec:
     def __init__(self, size, val=0):
         if(type(val)==BitVec):
             self.val = val.val
         else: self.val = val & ((1 << size) - 1) if val>=0 else (val+2**size) & ((1<<size) - 1)
         self.size = size
+
+    def set_val(self, val):
+        self.val = ((1<<self.size)-1) & val
+
+    @classmethod
+    def assign(cls, lhs, rhs):
+        if isinstance(rhs, BitVec):
+            pass
+        elif isinstance(rhs, int):
+            rhs = BitVec(rhs.bit_length(), rhs)
+        else:
+            raise TypeError(f"RHS should be either int or BitVec")
+        if isinstance(lhs, BitVec):
+            lhs[...] = rhs
+        elif isinstance(lhs, tuple):
+            shift = 0
+            for i, v in enumerate(reversed(lhs)):
+                v.set_val(rhs.val>>shift)
+                shift = v.size
 
     def __getitem__(self, index):
         if(type(index) == int):
@@ -290,7 +311,7 @@ class BitVec:
         a@b #concat a with b
 
         '''
-        if (type(lhs)==int):
+        if isinstance(lhs, int):
             v = self.val
             for i in range(lhs):
                 v = (v<<self.size) | self.val
@@ -325,22 +346,35 @@ class BitVec:
                 val_pshd = BitVec(val_pshd.size+stop1, val_pshd)<<stop1
                 mask = BitVec(self.size, mask)
                 self.val = ((~mask&self)|val_pshd).val
-
-                    
-
-                
-
-    #TODO: Complete the implementation for the following
-    #Operators to be supported
-    # +,-,/,*,**, |, &, ^, ~, <<, >>
-
-    #Other implementation details
-    #Let the results of operations be computed for highest available width and then reduced 
-    #Further add implementation such that one is able to assign to declared vector
-    #Ex: c = bv(32) #declare 32 biit vector
-    #    c[...] = 0x10 #Option 1
-    #    c.v    = 0x10 #add an attr v and write setattr for that
-    #    c[_]   = 0x10 #similar to first option; but declare a variable _ in the library
+        elif index is Ellipsis:
+            self.val = ((1<<self.size)-1) & val.val
+        else: raise IndexError(f"Index of type {type(index)} not expected")
+    
+    def __iter__(self):
+        for i in range(self.size):
+            yield self[i]
 
 
+class Concat:
+    def __init__(self, *vecs:BitVec) -> None:
+        self.__vec_list = list(vecs)
+
+    def __getattribute__(self, name: str) -> BitVec:
+        if name == "size":
+            size = 0
+            for v in self.__vec_list:
+                size += v.size
+            return size
+        elif name == "val":
+            vec = BitVec(0, 0)
+            for v in self.__vec_list:
+                vec = vec @ v
+            return vec.val
+        elif name == "vec":
+            vec = BitVec(0, 0)
+            for v in self.__vec_list:
+                vec = vec @ v
+            return vec
+        else:
+            raise AttributeError(f"Attribute {name} doesn't exist")
 
