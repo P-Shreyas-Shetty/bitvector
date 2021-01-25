@@ -335,6 +335,8 @@ class BitVec:
                 self.val = (self.val | (val[0]<<index)) if val[0]==1 else (self.val & ~(val[0]<<index))
         elif isinstance(index, slice):
             start, stop, step = index.start, index.stop, index.step
+            if start is None: start = self.size-1
+            if stop is None: stop = 0
             if not step is None:
                 raise IndexError(f"Step is not supported in BitVector set")
             else:
