@@ -31,18 +31,18 @@ bv.assign((c,s), bv(4,0xf)+bv(4,0x1))
 print(f"c,s:{c},{s}")
 s[...] = 0xf
 print(f"c,s:{c},{s}")
-#print(f"bv(9,0b111010001)[::-1]={bv(9,0b111010001)[::-1]}")
-#print(f"a+b={a+b}")
-#assert(a+b == a.val+b.val)
+print(f"bv(9,0b111010001)[::-1]={bv(9,0b111010001)[::-1]}")
+print(f"a+b={a+b}")
+assert(a+b == a.val+b.val)
 #print(f"a-b={a-b}")
-#assert(a-b == bv(16, a.val - b.val))
-#print(f"a*b={(a*b).hex()}")
-#print(f"a/b={(a/b).hex()}")
-#
-#
-#print(f"a[3:0]={a[3:0]}")
-#print(f"a[0]={a[0]}")
-#
-#print(f"bv(4, 0b1101)[0:3]={bv(4,0b1101)[0:3]}")
-#
-#print(f"bv(4,0xf)+bv(4,0x1)={bv(4,0xf)+bv(4,0x1)}")
+#assert(a-b == a.val - b.val)
+print(f"a*b={(a*b).hex()}")
+print(f"a/b={(a/b).hex()}")
+
+
+print(f"a[3:0]={a[3:0]}")
+print(f"a[0]={a[0]}")
+
+print(f"bv(4, 0b1101)[0:3]={bv(4,0b1101)[0:3]}")
+
+print(f"bv(4,0xf)+bv(4,0x1)={bv(4,0xf)+bv(4,0x1)}")

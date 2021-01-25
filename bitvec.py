@@ -73,7 +73,7 @@ class BitVec:
     # inplace add method
     def __iadd__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = (self.val + lhs) & ((1<<size) - 1)
         else:
             val = (self.val + lhs.val) & ((1<<size) - 1)
@@ -88,7 +88,7 @@ class BitVec:
     #inplace sub method
     def __isub__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = (self.val + ~lhs+1) 
         else:
             val = (self.val + ~lhs.val+1) 
@@ -103,7 +103,7 @@ class BitVec:
     #inplace mul method        
     def __imul__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val * lhs & ((1<<size) - 1)
         else:
             val = self.val * lhs.val & ((1<<size) - 1)
@@ -129,7 +129,7 @@ class BitVec:
     #inplace div method
     def __itruediv__ (self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val // lhs
         else:
             val = self.val // lhs.val
@@ -144,7 +144,7 @@ class BitVec:
     #inplace modulo method
     def __imod__ (self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val % lhs
         else:
             val = self.val % lhs.val
@@ -153,7 +153,7 @@ class BitVec:
     #left shift method
     def __lshift__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val << lhs
         else:
             val = (self.val << lhs.val)
@@ -161,7 +161,7 @@ class BitVec:
         
     def __ilshift__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val << lhs
         else:
             val = (self.val << lhs.val)
@@ -170,7 +170,7 @@ class BitVec:
     # right shift method        
     def __rshift__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val >> lhs
         else:
             val = (self.val >> lhs.val)
@@ -179,7 +179,7 @@ class BitVec:
     # circular left shift method
     def clshift(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = (self.val << lhs%size)|(self.val >> (size - lhs%size)) 
         else:
             val = (self.val << lhs.val%size)|(self.val >> (size - lhs.val%size)) 
@@ -187,7 +187,7 @@ class BitVec:
     
     def __irshift__(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = self.val >> lhs
         else:
             val = (self.val >> lhs.val)
@@ -196,7 +196,7 @@ class BitVec:
     #circular right shift method
     def crshift(self, lhs):
         size = self.size
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             val = (self.val >> lhs%size) | (self.val << (size - lhs%size)) 
         else:
             val = (self.val >> lhs.val%size) | (self.val << (size - lhs.val%size)) 
@@ -255,7 +255,7 @@ class BitVec:
 
     #equal to 
     def __eq__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val == lhs
         else:
             bool_var = (self.val == lhs.val)
@@ -263,7 +263,7 @@ class BitVec:
    
     #less than
     def __lt__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val < lhs
         else:
             bool_var = (self.val < lhs.val)
@@ -271,7 +271,7 @@ class BitVec:
 
     #less than or equal
     def __le__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val <= lhs
         else:
             bool_var = self.val <= lhs.val 
@@ -279,7 +279,7 @@ class BitVec:
     
     #not equal to
     def __ne__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val != lhs
         else:
             bool_var = self.val != lhs.val 
@@ -287,7 +287,7 @@ class BitVec:
 
     #greater than
     def __gt__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val > lhs
         else:
             bool_var = self.val > lhs.val 
@@ -295,7 +295,7 @@ class BitVec:
 
     #greater than equal
     def __ge__(self, lhs):
-        if(type(lhs) is int):
+        if isinstance(lhs, int):
             bool_var = self.val >= lhs
         else:
             bool_var = self.val >= lhs.val
