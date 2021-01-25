@@ -204,39 +204,53 @@ class BitVec:
 
     # bitwise and method
     def __and__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
         return BitVec(size, val)
     
     def __iand__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val & lhs.val
         return BitVec(size, val)
     
     #bitwise or method
     def __or__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val | lhs.val 
         return BitVec(size,val)
     
     def __ior__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val | lhs.val 
         return BitVec(size,val)
     
     #bitwise XOR method
     def __xor__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val ^ lhs.val 
         return BitVec(size,val)
     
     def __ixor__(self, lhs):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val ^ lhs.val 
         return BitVec(size,val)
     
     # invert method
     def __invert__(self):
+        if(isinstance(lhs, int)):
+            lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = ~self.val  
         return BitVec(size,val)
