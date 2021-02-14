@@ -1,11 +1,12 @@
 from typing import Union
 
 class BitVec:
-    def __init__(self, size, val=0):
+    def __init__(self, size = 32, val = 0, signed = False):
         if(type(val)==BitVec):
             self.val = val.val
-        else: self.val = val & ((1 << size) - 1) if val>=0 else (val+2**size) & ((1<<size) - 1)
-        self.size = size
+        else: self.val = val & ((1 << size) - 1) if val>=0 else (val+2**size) & ((1<<size) - 1)#; self.signed = True
+        self.size   = size
+        self.signed = signed
 
     def set_val(self, val):
         self.val = ((1<<self.size)-1) & val
@@ -59,17 +60,33 @@ class BitVec:
             else:
                 bv.val = int('0b'+bs[stop:start+1:step], base=2)
             return bv
-        
+    
+
     # represent method
     def __repr__(self):
-        return "0b"+str(bin(self.val))[2:].zfill(self.size) #return bin(self.val)
-    
+        string_val = str(bin(self.val))[2:].zfill(self.size)
+        if(self.signed == True): #if_signed
+            if(string_val[0] == "1" ): #if_negative
+                value = 2**self.size - self.val
+                return "-"+str(self.size) + "b" + str(bin(value))[2:].zfill(self.size)
+            else:
+                return str(self.size) + "b" + string_val 
+        else:
+            return str(self.size) + "b" + string_val
+
     #add method
     def __add__(self, lhs):
-        size = max([self.size, lhs.size]) + 1
-        val = (self.val + lhs.val)
-        return BitVec(size, val)
-    
+        if(isinstance(lhs, int)):
+            size = max([self.size, lhs.bit_length()]) + 1
+            val = (self.val + lhs)
+        else:
+            size = max([self.size, lhs.size]) + 1
+            val = (self.val + lhs.val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
+
     # inplace add method
     def __iadd__(self, lhs):
         size = self.size
@@ -77,13 +94,23 @@ class BitVec:
             val = (self.val + lhs) & ((1<<size) - 1)
         else:
             val = (self.val + lhs.val) & ((1<<size) - 1)
-        return BitVec(size, val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
 
     #sub method
     def __sub__(self, lhs):
-        size = max([self.size, lhs.size]) + 1
-        val = (self.val + ~lhs.val+1)
-        return BitVec(size, val)
+        if(isinstance(lhs, int)):
+            size = max([self.size, lhs.bit_length()]) + 1
+            val = (self.val + ~lhs+1)
+        else:
+            size = max([self.size, lhs.size]) + 1
+            val = (self.val + ~lhs.val+1)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
 
     #inplace sub method
     def __isub__(self, lhs):
@@ -92,14 +119,24 @@ class BitVec:
             val = (self.val + ~lhs+1) 
         else:
             val = (self.val + ~lhs.val+1) 
-        return BitVec(size, val)
-    
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
+
     #mul method
     def __mul__(self, lhs):
-        val = (self.val * lhs.val)
-        size = val.bit_length()
-        return BitVec(size, val)
-           
+        if(isinstance(lhs, int)):
+            val = (self.val * lhs)
+            size = val.bit_length()
+        else:
+            val = (self.val * lhs.val)
+            size = val.bit_length()
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
+
     #inplace mul method        
     def __imul__(self, lhs):
         size = self.size
@@ -107,7 +144,10 @@ class BitVec:
             val = self.val * lhs & ((1<<size) - 1)
         else:
             val = self.val * lhs.val & ((1<<size) - 1)
-        return BitVec(size, val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     #power method
     def __pow__(self, lhs):
@@ -120,11 +160,18 @@ class BitVec:
         val = (self.val ** lhs.val) &((1<<size) - 1)
         return BitVec(size, val)
 
-    #div method
+    #div method     --- neg number pending
     def __truediv__ (self, lhs):
-        size = max([self.size, lhs.size])
-        val = self.val // lhs.val
-        return BitVec(size, val)
+        if isinstance(lhs, int):
+            size = max([self.size, lhs.bit_length()])
+            val = self.val // lhs 
+        else:
+            size = max([self.size, lhs.size])
+            val = self.val // lhs.val
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
 
     #inplace div method
     def __itruediv__ (self, lhs):
@@ -135,10 +182,13 @@ class BitVec:
             val = self.val // lhs.val
         return BitVec(size, val)
 
-    #modulo method
+    #modulo method   --- neg number pending
     def __mod__ (self, lhs):
         size = max([self.size, lhs.size])
-        val = self.val % lhs.val
+        if isinstance(lhs, int):
+            val = self.val % lhs
+        else:
+            val = self.val % lhs.val
         return BitVec(size, val)
     
     #inplace modulo method
@@ -208,14 +258,20 @@ class BitVec:
             lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
-        return BitVec(size, val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     def __iand__(self, lhs):
         if(isinstance(lhs, int)):
             lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val & lhs.val
-        return BitVec(size, val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     #bitwise or method
     def __or__(self, lhs):
@@ -223,14 +279,20 @@ class BitVec:
             lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val | lhs.val 
-        return BitVec(size,val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     def __ior__(self, lhs):
         if(isinstance(lhs, int)):
             lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val | lhs.val 
-        return BitVec(size,val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     #bitwise XOR method
     def __xor__(self, lhs):
@@ -238,34 +300,55 @@ class BitVec:
             lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
         val = self.val ^ lhs.val 
-        return BitVec(size,val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
+
     
     def __ixor__(self, lhs):
         if(isinstance(lhs, int)):
             lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = self.val ^ lhs.val 
-        return BitVec(size,val)
+        try:
+            return BitVec(size = size, val = val, signed = self.signed | lhs.signed)
+        except:
+            return BitVec(size = size, val = val, signed = self.signed)
     
     # invert method
     def __invert__(self):
-        if(isinstance(lhs, int)):
-            lhs = BitVec(lhs, lhs.bit_length())
         size = self.size
         val = ~self.val  
-        return BitVec(size,val)
+        return BitVec(size = size, val = val, signed = self.signed )
     
     #to_hex convert method
     def hex(self):
-        return hex(self.val)
+        string_val = str(bin(self.val))[2:].zfill(self.size)
+        if(self.signed == True): #if_signed
+            if(string_val[0]=="1"):#if_negative
+                value = 2**self.size - self.val
+                return "-" + str(self.size) + "h" + hex(value)[2:]
+            else:
+                return str(self.size) + "h" + hex(self.val)[2:]
+        else:
+            return str(self.size) + "h" + hex(self.val)[2:]
 
     #to_dec convert method
     def dec(self):
-        return str(self.val)
+        string_val = str(bin(self.val))[2:].zfill(self.size)
+        if(self.signed == True): #if_signed
+            if(string_val[0]=="1"):#if_negative
+                value = 2**self.size - self.val
+                return  "-" + str(value)
+            else:
+                return str(self.val)
+        else:
+            return str(self.val)
 
     #to_bin convert method
     def bin(self):
-        return bin(self.val())
+            return str(self.size) + "b" + bin(self.val)[2:]
 
     #equal to 
     def __eq__(self, lhs):
@@ -323,7 +406,6 @@ class BitVec:
         ex: a:BitVec and b:BitVec
         2@a #Repeat a or concatenate a with itself
         a@b #concat a with b
-
         '''
         if isinstance(lhs, int):
             v = self.val
@@ -371,6 +453,8 @@ class BitVec:
             yield self[i]
 
 
+
+
 class Concat:
     def __init__(self, *vecs:BitVec) -> None:
         self.__vec_list = list(vecs)
@@ -393,4 +477,3 @@ class Concat:
             return vec
         else:
             raise AttributeError(f"Attribute {name} doesn't exist")
-
