@@ -55,3 +55,8 @@ assert(next(pm) == 3)
 
 a = bv(12, 0b1000000010)
 print(f"vec = {a}; list of set bits: {a.get_all_set_bits()}")
+
+a = bv(8, -0xf, True)
+print(a.get_val(), a.val)
+
+print((bv(8, -0xf, signed=True)/2).get_val())
