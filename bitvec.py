@@ -417,6 +417,9 @@ class BitVec:
             outval = (self.val << lhs.size) | lhs.val
             return BitVec(rsize, outval)
 
+    
+
+
     def __rmatmul__(self, rhs):
         return self@rhs;
 
@@ -451,6 +454,25 @@ class BitVec:
     def __iter__(self):
         for i in range(self.size):
             yield self[i]
+            
+    def pattern_match(self, pattern=None):
+        '''
+        Return an iterator returns index on the vector where MSB of the 
+        pattern coincide with bitvector value
+        Ex: a = bv(12, 0b110111011101)
+        pat = a.pattern_match(bv(4, 0b1101))
+        next(pat) => 3
+        next(pat) => 7
+        ...
+
+        If no pattern is passed, default is assumed to be bv(1,1)
+
+        '''
+        if pattern is None: pattern = BitVec(1,1)
+        assert(isinstance(self, BitVec))
+        for index in range(pattern.size-1, self.size):
+            if self[index:(index-pattern.size+1)]==pattern:
+                yield index
 
 
 
