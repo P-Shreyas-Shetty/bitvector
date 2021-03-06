@@ -418,8 +418,6 @@ class BitVec:
             return BitVec(rsize, outval)
 
     
-
-
     def __rmatmul__(self, rhs):
         return self@rhs;
 
@@ -473,6 +471,9 @@ class BitVec:
         for index in range(pattern.size-1, self.size):
             if self[index:(index-pattern.size+1)]==pattern:
                 yield index
+
+    def get_all_set_bits(self):
+        return list(self.pattern_match())
 
 
 
