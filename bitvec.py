@@ -372,31 +372,15 @@ class BitVec:
     
     #to_hex convert method
     def hex(self):
-        string_val = str(bin(self.val))[2:].zfill(self.size)
-        if(self.signed == True): #if_signed
-            if(string_val[0]=="1"):#if_negative
-                value = 2**self.size - self.val
-                return "-" + str(self.size) + "h" + hex(value)[2:]
-            else:
-                return str(self.size) + "h" + hex(self.val)[2:]
-        else:
-            return str(self.size) + "h" + hex(self.val)[2:]
+       return hex(self.get_val()) 
 
     #to_dec convert method
     def dec(self):
-        string_val = str(bin(self.val))[2:].zfill(self.size)
-        if(self.signed == True): #if_signed
-            if(string_val[0]=="1"):#if_negative
-                value = 2**self.size - self.val
-                return  "-" + str(value)
-            else:
-                return str(self.val)
-        else:
-            return str(self.val)
+       return str(self.get_val()) 
 
     #to_bin convert method
     def bin(self):
-            return str(self.size) + "b" + bin(self.val)[2:]
+            return bin(self.val)
 
     #equal to 
     def __eq__(self, lhs):
