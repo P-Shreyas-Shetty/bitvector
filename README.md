@@ -114,7 +114,7 @@ a = a - b
 a = bv(4, 0xf)*bv(4, 0xf) # a = bv(8, 0b11100001)
 ```
 
-- Division operation has two variants. Both variants behave similarly in case of unsigned arguments. In case operations between signed and unsigned numbers, ```/``` operator will return such that reminder is negative. For a Python like behaviour (positive reminder always), ```//``` operator is overloaded 
+- Division operation has two variants. Both variants behave similarly in case of unsigned arguments. In case operations between signed and unsigned numbers, ```/``` operator will return such that reminder is negative. For a Python like behaviour (positive reminder always), ```//``` operator is overloaded to divide negative numbers such that reminder is positive.
 
 - All bit-wise operations behave as expected.
 - For circular shift operation, ```clshift``` and ```crshift``` methods are provided
