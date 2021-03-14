@@ -54,6 +54,13 @@ class BitVec:
         return BitVec(size, val, signed=True)
 
     @classmethod
+    def u2s(cls, ubv):
+        '''
+        Convert unsigned bitvec to bitvec
+        '''
+        return BitVec(ubv.size, ubv.get_val(), True)
+
+    @classmethod
     def unsigned(cls, size=32, val=0):
         '''
         Create signed BitVec
