@@ -55,6 +55,10 @@ e = bv.signed(12, -0xf) #==> bit signed [11:0] e = -'hf;
 #Method to construct from value only; size is set as size of input value
 #Default unsigned
 f = bv.from_val(0xf) #unsigned; size=4bit
+
+#Method to covert unsigned bv to signed bv
+u = bv(22,0x7ffff4)
+s = bv.u2s(u) #==>s.get_val() = -12
 ```
 
 ### 3.Assignment, Indexing and Casting
