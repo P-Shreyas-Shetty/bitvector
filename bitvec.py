@@ -1,6 +1,9 @@
 from typing import Union
 
 class BitVec:
+    val: int
+    size: int
+    signed: bool
     def __init__(self, size = 32, val = 0, signed=False):
         if(type(val)==BitVec):
             self.val = val.val
@@ -47,7 +50,7 @@ class BitVec:
                 shift = v.size
 
     @classmethod
-    def signed(cls, size=32, val=0):
+    def signed_vec(cls, size=32, val=0):
         '''
         Create signed BitVec
         '''
@@ -460,6 +463,16 @@ class BitVec:
     def __rmatmul__(self, rhs):
         return self@rhs
 
+    @classmethod
+    def concat(cls, *args):
+        '''Concatenate vectors
+           Under the hood calls concat operator
+        '''
+        res = BitVec(0)
+        for v in args: res @= v
+        return res
+
+    C = concat
 
     def __setitem__(self, index, val):
         if isinstance(val, int): val = BitVec(val.bit_length(), val)
@@ -513,29 +526,3 @@ class BitVec:
 
     def get_all_set_bits(self):
         return list(self.pattern_match())
-
-
-
-
-class Concat:
-    def __init__(self, *vecs:BitVec) -> None:
-        self.__vec_list = list(vecs)
-
-    def __getattribute__(self, name: str) -> BitVec:
-        if name == "size":
-            size = 0
-            for v in self.__vec_list:
-                size += v.size
-            return size
-        elif name == "val":
-            vec = BitVec(0, 0)
-            for v in self.__vec_list:
-                vec = vec @ v
-            return vec.val
-        elif name == "vec":
-            vec = BitVec(0, 0)
-            for v in self.__vec_list:
-                vec = vec @ v
-            return vec
-        else:
-            raise AttributeError(f"Attribute {name} doesn't exist")
