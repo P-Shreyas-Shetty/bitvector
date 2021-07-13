@@ -60,3 +60,4 @@ a = bv(8, -0xf, True)
 print(a.get_val(), a.val)
 
 print((bv(8, -0xf, signed=True)/2).get_val())
+print(bv(8, 0b1101101).get_parity())

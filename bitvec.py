@@ -1,6 +1,25 @@
-from typing import Union
-
 class BitVec:
+    '''
+    Class for verilog-like bitvector. You can define bitvector of arbitrary size, either signed or unsigned
+    Example usage:
+    from bitvec import BitVec as bv
+
+    #Define an unsigned bitvec: bit [10:0] a;
+    a = bv(11)
+
+    #With size and value; unsigned:
+    a = bv(11, 0b10111)
+
+    #With size and value; signed:
+    a = bv(11, 0b10111, True)
+
+    Supports:
+     - all arithmatic and bitwise operator 
+     - Verilog style slice indexing and slice assignment. Unlike verilog, also supports reverse index
+     - concatenation & repetiton through @ operator and concat/C class method
+     - Some extra helper function such as get_all_set_bits to return index of all set bits
+
+    '''
     val: int
     size: int
     signed: bool
@@ -474,6 +493,19 @@ class BitVec:
 
     C = concat
 
+    @classmethod
+    def reduce(cls):
+        '''
+        Returns a Reducer object that can be used to use bitwise operator as reduction operators
+        Ex in verilog: |4'b1101 == 1'b1
+        Here: bv.R|bv(4, 0b1101) == bv(1,0b1)
+        or  : bv.reduce()|bv(4, 0b1101)==bv(1,0b1)
+        '''
+        return Reducer()
+
+    R = reduce
+    
+
     def __setitem__(self, index, val):
         if isinstance(val, int): val = BitVec(val.bit_length(), val)
         elif not isinstance(val, BitVec): raise TypeError(f"Expected RHS to be either BitVec or int; got {type(val)}")
@@ -525,4 +557,47 @@ class BitVec:
                 yield index
 
     def get_all_set_bits(self):
+        '''Returns list of indices of set bits'''
         return list(self.pattern_match())
+
+    def get_all_reset_bits(self):
+        '''Returns list of all indices of bits not set'''
+        set_bits = self.get_all_set_bits()
+        return [i for i in range(self.size) if not i in set_bits]
+
+    def get_parity(self):
+        return BitVec.reduce()^self
+
+class Reducer:
+    '''
+    This is a helper class to introduce reduce operation in a readable fashion
+    Use case:
+    from bitvec import Reducer as R
+
+    R| bv(9, 0b1111) => bv(1,1)
+
+    This works on binary bitwise operators (|, &, ^)
+
+    alternatively, this object is provided in bv class as classmethod
+    bv.reduce()|bv(9, 0b11010101) or bv.R()|bv(9, 0b11101010) (recommonded)
+    '''
+    def __init__(self) -> None:
+        pass
+
+    def __or__(self, op: BitVec)->BitVec:
+        ret = BitVec(1)
+        for bit in op:
+            ret |= bit
+        return ret
+
+    def __and__(self, op: BitVec)->BitVec:
+        ret = BitVec(1)
+        for bit in op:
+            ret &= bit
+        return ret
+
+    def __xor__(self, op: BitVec)->BitVec:
+        ret = BitVec(1)
+        for bit in op:
+            ret ^= bit
+        return ret
