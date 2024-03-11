@@ -358,6 +358,13 @@ class BitVec:
         val = self.val & lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
+    def __rand__(self, lhs):
+        if isinstance(lhs, int):
+            lhs = BitVec(lhs, lhs.bit_length())
+        size = max([self.size, lhs.size])
+        val = self.val & lhs.val
+        return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
+
     def __iand__(self, lhs):
         if isinstance(lhs, int):
             lhs = BitVec(lhs, lhs.bit_length())
@@ -373,6 +380,13 @@ class BitVec:
         val = self.val | lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
+    def __ror__(self, lhs):
+        if isinstance(lhs, int):
+            lhs = BitVec(lhs, lhs.bit_length())
+        size = max([self.size, lhs.size])
+        val = self.val | lhs.val
+        return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
+
     def __ior__(self, lhs):
         if isinstance(lhs, int):
             lhs = BitVec(lhs, lhs.bit_length())
@@ -382,6 +396,13 @@ class BitVec:
 
     # bitwise XOR method
     def __xor__(self, lhs):
+        if isinstance(lhs, int):
+            lhs = BitVec(lhs, lhs.bit_length())
+        size = max([self.size, lhs.size])
+        val = self.val ^ lhs.val
+        return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
+
+    def __rxor__(self, lhs):
         if isinstance(lhs, int):
             lhs = BitVec(lhs, lhs.bit_length())
         size = max([self.size, lhs.size])
@@ -524,12 +545,19 @@ class BitVec:
                 raise IndexError(
                     f"Index {index} out of range; size of the vector is {self.size}"
                 )
+            elif index<0:
+                shift = self.size + index
+                self.val = (
+                    (self.val | (val[0] << shift))
+                    if val[0] == 1
+                    else (self.val & ~(val[0] << shift))
+                ).val
             else:
                 self.val = (
                     (self.val | (val[0] << index))
                     if val[0] == 1
                     else (self.val & ~(val[0] << index))
-                )
+                ).val
         elif isinstance(index, slice):
             start, stop, step = index.start, index.stop, index.step
             if start is None:
