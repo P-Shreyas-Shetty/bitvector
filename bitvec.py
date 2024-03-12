@@ -353,21 +353,21 @@ class BitVec:
     # bitwise and method
     def __and__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
     def __rand__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = max([self.size, lhs.size])
         val = self.val & lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
     def __iand__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = self.size
         val = self.val & lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
@@ -375,7 +375,7 @@ class BitVec:
     # bitwise or method
     def __or__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = max([self.size, lhs.size])
         val = self.val | lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
@@ -389,7 +389,7 @@ class BitVec:
 
     def __ior__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = self.size
         val = self.val | lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
@@ -397,21 +397,21 @@ class BitVec:
     # bitwise XOR method
     def __xor__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = max([self.size, lhs.size])
         val = self.val ^ lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
     def __rxor__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = max([self.size, lhs.size])
         val = self.val ^ lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
 
     def __ixor__(self, lhs):
         if isinstance(lhs, int):
-            lhs = BitVec(lhs, lhs.bit_length())
+            lhs = BitVec(lhs.bit_length(), lhs)
         size = self.size
         val = self.val ^ lhs.val
         return BitVec(size=size, val=val, signed=self.signed | lhs.signed)
@@ -545,7 +545,7 @@ class BitVec:
                 raise IndexError(
                     f"Index {index} out of range; size of the vector is {self.size}"
                 )
-            elif index<0:
+            elif index < 0:
                 shift = self.size + index
                 self.val = (
                     (self.val | (val[0] << shift))
