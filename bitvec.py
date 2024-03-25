@@ -612,13 +612,23 @@ class BitVec:
                 yield index
 
     def get_all_set_bits(self):
-        """Returns list of indices of set bits"""
+        """
+        Returns list of indices of set bits
+        Probably should look for something better, but can
+        be used directly as bv.get_all_set_bits(<int>)
+        """
+        if isinstance(self, int):
+            return list(BitVec.from_val(self).pattern_match())
         return list(self.pattern_match())
 
     def get_all_reset_bits(self):
         """Returns list of all indices of bits not set"""
-        set_bits = self.get_all_set_bits()
-        return [i for i in range(self.size) if not i in set_bits]
+        if isinstance(self, int):
+            arg = BitVec.from_val(self)
+        else:
+            arg = self
+        set_bits = BitVec.get_all_set_bits(arg)
+        return [i for i in range(arg.size) if not i in set_bits]
 
     def get_parity(self):
         """Returns parity of vector"""
