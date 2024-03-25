@@ -115,7 +115,7 @@ class BitVec:
         """
         Deduces size from the value
         """
-        return BitVec(val.bit_length(), val, signed)
+        return BitVec(val.bit_length() if val != 0 else 1, val, signed)
 
     def __getitem__(self, index):
         if isinstance(index, int):
@@ -249,7 +249,6 @@ class BitVec:
             )
             return BitVec(size=size, val=val, signed=self.signed)
         elif isinstance(lhs, BitVec):
-            print(lhs.get_val())
             size = max([self.size, lhs.size])
             val = (-1 if self.get_val() * lhs.get_val() < 0 else 1) * (
                 abs(self.get_val()) // abs(lhs.get_val())
@@ -537,7 +536,7 @@ class BitVec:
 
     def __setitem__(self, index, val):
         if isinstance(val, int):
-            val = BitVec(val.bit_length(), val)
+            val = BitVec.from_val(val)
         elif not isinstance(val, BitVec):
             raise TypeError(f"Expected RHS to be either BitVec or int; got {type(val)}")
         if isinstance(index, int):
@@ -547,17 +546,9 @@ class BitVec:
                 )
             elif index < 0:
                 shift = self.size + index
-                self.val = (
-                    (self.val | (val[0] << shift))
-                    if val[0] == 1
-                    else (self.val & ~(val[0] << shift))
-                ).val
+                self[shift:shift] = val[0]
             else:
-                self.val = (
-                    (self.val | (val[0] << index))
-                    if val[0] == 1
-                    else (self.val & ~(val[0] << index))
-                ).val
+                self[index:index] = val[0]
         elif isinstance(index, slice):
             start, stop, step = index.start, index.stop, index.step
             if start is None:
@@ -669,3 +660,14 @@ class Reducer:
         for bit in op:
             ret ^= bit
         return ret
+
+
+bv = BitVec
+b = bv(8, 909)
+print(b)
+
+b[0] = 1
+b[-1] = 1
+print(b)
+b[-1] = 0
+print(b)
