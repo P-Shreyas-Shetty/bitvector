@@ -660,14 +660,3 @@ class Reducer:
         for bit in op:
             ret ^= bit
         return ret
-
-
-bv = BitVec
-b = bv(8, 909)
-print(b)
-
-b[0] = 1
-b[-1] = 1
-print(b)
-b[-1] = 0
-print(b)
