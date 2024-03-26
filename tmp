@@ -1,8 +1,0 @@
-
-test.ccl_v5_xt_emu_env.dut_0_cfg.enable_fec_rand_err(1, num_corrupt_words=2)
-print "INFO: link %d frame_lock %d" % (1, test.ccl_v5_xt_emu_env.dut_1_cfg.ccl_v5.rx.status.per_link[1].link_status.frame_lock)
-time.sleep(1)
-
-#check for interrupt
-intr = test.ccl_v5_xt_emu_env.dut_1_cfg.ccl_v5.rx.status.per_link[1].rx_intr.status.rx_timeout()
-
