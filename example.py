@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
         print(f"\n{i}: data={data.hex()}")
         #corrupting a single bit
-        if i%3==0:
+        if i%3==3:
             print("   Corrupting data...")
             data[0] ^= 1
         check = checker.send(data)
