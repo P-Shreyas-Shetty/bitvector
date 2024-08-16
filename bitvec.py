@@ -176,7 +176,7 @@ class BitVec:
         else:
             size = max([self.size, lhs.size]) + 1
             val = self.val + lhs.val
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # inplace add method
     def __iadd__(self, lhs):
@@ -186,7 +186,7 @@ class BitVec:
             return BitVec(size=size, val=val, signed=self.is_signed)
         else:
             val = (self.val + lhs.val) & ((1 << size) - 1)
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # sub method
     def __sub__(self, lhs):
@@ -197,7 +197,7 @@ class BitVec:
         else:
             size = max([self.size, lhs.size]) + 1
             val = self.val + ~lhs.val + 1
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # inplace sub method
     def __isub__(self, lhs):
@@ -207,7 +207,7 @@ class BitVec:
             return BitVec(size=size, val=val, signed=self.is_signed)
         else:
             val = self.val + ~lhs.val + 1
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # mul method
     def __mul__(self, lhs):
@@ -218,7 +218,7 @@ class BitVec:
         else:
             val = self.val * lhs.val
             size = val.bit_length()
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # inplace mul method
     def __imul__(self, lhs):
@@ -228,7 +228,7 @@ class BitVec:
             return BitVec(size=size, val=val, signed=self.is_signed)
         else:
             val = self.val * lhs.val & ((1 << size) - 1)
-            return BitVec(size=size, val=val, signed=self.is_signed | lhs.signed)
+            return BitVec(size=size, val=val, signed=self.is_signed | lhs.is_signed)
 
     # power method
     def __pow__(self, lhs):
